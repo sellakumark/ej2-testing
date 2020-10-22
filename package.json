@@ -20,10 +20,8 @@
         "requirejs": "^2.1.26"
     },
     "scripts": {
-        "driver-update": "webdriver-manager update",
-        "driver-start": "webdriver-manager start",
-        "email": "gulp send-email",
         "start": "gulp start",
-        "test": "gulp e2e-ci-test"
+        "test": "gulp e2e-ci-test",
+        "testdriver": "gulp e2e-webdriver-update && gulp e2e-webdriver-start"
     }
 }
