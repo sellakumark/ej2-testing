@@ -1,0 +1,6 @@
+{
+    "components": ["Schedule"],
+    "browsers": ["chrome"],
+    "branchName": "development",
+    "dashBoardReport": false
+}

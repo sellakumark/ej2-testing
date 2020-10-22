@@ -1,0 +1,579 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Schedule Typescript Component</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="description" content="Typescript UI Controls" />
+    <meta name="author" content="Syncfusion" />
+    <link rel="shortcut icon" href="../favicon.ico" />
+    <link rel="stylesheet" href="./common/styles/bootstrap.min.css" />
+    <link href="../node_modules/@syncfusion/ej2-base/styles/material.css" rel="stylesheet" />
+    <link href="../node_modules/@syncfusion/ej2-buttons/styles/material.css" rel="stylesheet" />
+    <link href="../node_modules/@syncfusion/ej2-calendars/styles/material.css" rel="stylesheet" />
+    <link href="../node_modules/@syncfusion/ej2-dropdowns/styles/material.css" rel="stylesheet" />
+    <link href="../node_modules/@syncfusion/ej2-inputs/styles/material.css" rel="stylesheet" />
+    <link href="../node_modules/@syncfusion/ej2-navigations/styles/material.css" rel="stylesheet" />
+    <link href="../node_modules/@syncfusion/ej2-popups/styles/material.css" rel="stylesheet" />
+    <link href="../node_modules/@syncfusion/ej2-schedule/styles/material.css" rel="stylesheet" />
+    <script data-main="index-views" src="../node_modules/requirejs/require.js"></script>
+    <script src="./common/require.config.js"></script>
+    <script id="datetemplate" type="text/x-template">
+        <div>
+            <div>${getDateText(data.date)}</div>
+            <div>${getDayText(data.date)}</div>
+        </div>
+    </script>
+    <script id="celltemplate" type="text/x-template">
+        ${if(type === "workCells")}
+            <div class='templatewrap'>${getCellText(data.date)}</div>
+        ${/if}
+        ${if(type === "monthCells")}
+            <div class='templatewrap'>${date.toLocaleString()}</div>
+        ${/if}
+    </script>
+    <script id="apptemplate" type="text/x-template">
+        <div>
+            <div>Subject: ${Subject}</div>
+            <div>StartTime: ${getDateTimeText(data.StartTime)}</div>
+            <div>EndTime: ${ getDateTimeText(data.EndTime) }</div>
+        </div>
+    </script>
+    <script id="tooltipTemplate" type="text/x-template">
+        <div>
+            <div>${Subject}</div>
+            <div>${StartTime.toLocaleString()}</div>
+            <div>${EndTime.toLocaleString()}</div>
+        </div>
+    </script>
+    <script id="majorSlotTemplate" type="text/x-template">
+        <div>${majorSlotTemplate(data.date)}</div>
+    </script>
+    <script id="minorSlotTemplate" type="text/x-template">
+        <div>${minorSlotTemplate(data.date)}</div>
+    </script>
+    <script id="headerTemplate" type="text/x-template">
+        <div>
+            ${if (elementType === 'cell')}
+                <div class="e-cell-header">
+                    <div class="e-header-icon-wrapper">
+                        <button class="e-close" title="Close"></button>
+                    </div>
+                </div>
+            ${else}
+                <div class="e-event-header">
+                    <div class="e-header-icon-wrapper">
+                        <button class="e-close" title="CLOSE"></button>
+                    </div>
+                </div>
+            ${/if}
+        </div>
+    </script>
+    <script id="contentTemplate" type="text/x-template">
+        <div>
+            ${if (elementType === 'cell')}
+                <div class="e-cell-content">
+                    <form class="e-schedule-form">
+                        <div style="padding:10px">
+                            <input class="subject e-field" type="text" name="Subject" placeholder="Title" style="width:100%">
+                        </div>
+                        <div style="padding:10px">
+                            <input class="location e-field" type="text" name="Location" placeholder="Location" style="width:100%">
+                        </div>
+                    </form>
+                </div>
+            ${else}
+                <div class="e-event-content">
+                    <div class="e-subject-wrap" style="height:50px">
+                        ${if (Subject)}<div class="subject" style="padding-left:15px;font-weight:500;">${Subject}</div>${/if}
+                        ${if (Location)}<div class="location" style="padding-left:15px">${Location}</div>${/if}
+                        ${if (Description)}<div class="description" style="padding-left:15px">${Description}</div>${/if}
+                    </div>
+                </div>
+            ${/if}
+        </div>
+    </script>
+    <script id="footerTemplate" type="text/x-template">
+        <div>
+            ${if (elementType === 'cell')}
+                <div class="e-cell-footer">
+                    <button class="e-event-details" title="Extra Details">Extra Details</button>
+                    <button class="e-event-create" title="Add">Add</button>
+                </div>
+            ${else}
+                <div class="e-event-footer">
+                    <button class="e-event-edit" title="Edit">Edit</button>
+                    <button class="e-event-delete" title="Delete">Delete</button>
+                </div>
+            ${/if}
+        </div>
+    </script>
+    <script id="eventEditor" type="text/x-template">
+        <table class="custom-event-editor" width="100%" cellpadding="5">
+            <tbody>
+                <tr>
+                    <td class="e-textlabel">Subject:</td>
+                    <td colspan="4">
+                        <input id="Subject" class="e-field" type="text" value="" name="Subject" style="width: 100%" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e-textlabel">Description:</td>
+                    <td colspan="4">
+                        <textarea id="Description" class="e-field" name="Description" rows="3" cols="50"
+                            style="width: 100%; height: 60px !important; resize: vertical"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e-textlabel">StartTime:</td>
+                    <td colspan="2">
+                        <input id="StartTime" class="e-field" type="text" name="StartTime" />
+                    </td>
+                    <td class="e-textlabel">EndTime:</td>
+                    <td colspan="2">
+                        <input id="EndTime" class="e-field" type="text" name="EndTime" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="form-check">
+                            <label class="form-check-label e-textlabel" for="AllDay">All Day</label>
+                            <input type="checkbox" class="form-check-input e-field" name="IsAllDay" id="AllDay">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </script>
+
+    <style>
+        .prop-section label {
+            display: block;
+            margin-bottom: 0;
+        }
+
+        .schedule-cell-dimension.e-schedule .e-vertical-view .e-date-header-wrap table col,
+        .schedule-cell-dimension.e-schedule .e-vertical-view .e-content-wrap table col {
+            width: 200px;
+        }
+
+        .schedule-cell-dimension.e-schedule .e-vertical-view .e-time-cells-wrap table td,
+        .schedule-cell-dimension.e-schedule .e-vertical-view .e-work-cells {
+            height: 100px;
+        }
+
+        .schedule-cell-dimension.e-schedule .e-month-view .e-work-cells,
+        .schedule-cell-dimension.e-schedule .e-month-view .e-date-header-wrap table col {
+            width: 200px;
+        }
+
+        .schedule-cell-dimension.e-schedule .e-month-view .e-work-cells {
+            height: 200px;
+        }
+
+        .custom-event-editor tr:last-child .form-check-input.e-field {
+            margin-top: 0;
+            margin-left: 1.25rem;
+        }
+
+        .e-schedule .e-work-cells .templatewrap img,
+        .schedule-cell-dimension.e-schedule .e-work-cells .templatewrap img {
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid" style="margin-top:15px;">
+        <div class="row">
+            <div class="control-section col-md-8">
+                <div id="schedule"></div>
+            </div>
+            <div class="prop-section col-md-4 prop-grid" style="height:600px; overflow-y:scroll;">
+                <div class="row">
+                    <div class="col-md-5">enableRtl</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="rtl" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">startHour</div>
+                    <div class="col-md-5">
+                        <select id="start-hour" name="ddl" class="form-control">
+                            <option value="00:00" selected>00:00</option>
+                            <option value="08:00">08:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="12:00">12:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">endHour</div>
+                    <div class="col-md-5">
+                        <select id="end-hour" name="ddl" class="form-control">
+                            <option value="18:00">18:00</option>
+                            <option value="20:00">20:00</option>
+                            <option value="22:00">22:00</option>
+                            <option value="24:00" selected>24:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">workDays</div>
+                    <div class="col-md-5">
+                        <select id="workdays" name="ddl" class="form-control">
+                            <option value="1,3,5">Mon, Wed, Fri</option>
+                            <option value="1,2,3,4,5" selected>Mon, Tue, Wed, Thu, Fri</option>
+                            <option value="2,3,4,5">Tue, Wed, Thu, Fri</option>
+                            <option value="4,5,6,1,2">Thu, Fri, Sat, Mon, Tue</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">showWeekend</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="weekend" checked="false" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">showWeekNumber</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="weeknumber" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">currentView</div>
+                    <div class="col-md-5">
+                        <select id="scheduleview" name="ddl" class="form-control">
+                            <option value="Day">Day</option>
+                            <option value="Week" selected>Week</option>
+                            <option value="WorkWeek">Work Week</option>
+                            <option value="Month">Month</option>
+                            <option value="Agenda">Agenda</option>
+                            <option value="MonthAgenda">Month Agenda</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">selectedDate</div>
+                    <div class="col-md-5">
+                        <input type="text" id="scheduledate" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">showQuickInfo</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="quickinfo" checked="true" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">headerTemplate</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="hT" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">contentTemplate</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="cT" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">footerTemplate</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="fT" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">dateHeaderTemplate</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="date-header" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">cellTemplate</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="cell-temp" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">eventSettings.template</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="event-temp" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">enableTooltip</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="enableTooltip" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">enableTooltipTemplate</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="enableTooltipTemplate" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">showHeaderbar</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="headerbar" checked="true" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">readonly</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="readonly" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">timezone</div>
+                    <div class="col-md-5">
+                        <select id="time-zone" name="ddl" class="form-control">
+                            <option value="America/New_York">(UTC-05:00) Eastern Time</option>
+                            <option value="UTC">UTC</option>
+                            <option value="Europe/Moscow">(UTC+03:00) Moscow+00 - Moscow</option>
+                            <option value="Asia/Kolkata" selected>(UTC+05:30) India Standard Time</option>
+                            <option value="Australia/Perth">(UTC+08:00) Western Time - Perth</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">locale</div>
+                    <div class="col-md-5">
+                        <select id="locale" class="form-control">
+                            <option value="en" selected>English*</option>
+                            <option value="de">German - Germany*</option>
+                            <option value="fr-CH">French - Switzerland*</option>
+                            <option value="ar">Arabic*</option>
+                            <option value="zh">Chinese - China*</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">firstDayOfWeek</div>
+                    <div class="col-md-5">
+                        <select id="dayofweek" class="form-control">
+                            <option value="0" selected="">Sunday</option>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">interval</div>
+                    <div class="col-md-5">
+                        <select id="interval" name="ddl" class="form-control">
+                            <option value="30">30</option>
+                            <option value="60" selected>60</option>
+                            <option value="120">120</option>
+                            <option value="180">180</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">timeScale.slotCount</div>
+                    <div class="col-md-5">
+                        <select id="slotCount" name="ddl" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">timeScale.enable</div>
+                    <div class="col-md-5">
+                        <select id="timescale" name="ddl" class="form-control">
+                            <option value="true" selected>true</option>
+                            <option value="false">false</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">timeScale.templates</div>
+                    <div class="col-md-5">
+                        <select id="timeScale-temp" name="ddl" class="form-control">
+                            <option value="enable">Enable</option>
+                            <option value="disable" selected>Disable</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">dateFormat</div>
+                    <div class="col-md-5">
+                        <select id="date-format" name="ddl" class="form-control">
+                            <option value="MMMM d, yyyy">MMMM d, yyyy</option>
+                            <option value="dd/MM/yyyy">dd/MM/yyyy</option>
+                            <option value="dd MMM yyyy">dd MMM yyyy</option>
+                            <option value="d E MMM y">d E MMM y</option>
+                            <option value="MMM dd yyyy">MMM dd yyyy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">workHours.start</div>
+                    <div class="col-md-5">
+                        <select id="work-start" name="ddl" class="form-control">
+                            <option value="09:00" selected>09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">workHours.end</div>
+                    <div class="col-md-5">
+                        <select id="work-end" name="ddl" class="form-control">
+                            <option value="18:00" selected>18:00</option>
+                            <option value="20:00">20:00</option>
+                            <option value="22:00">22:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">workHours.highlight</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="workhours-highlight" checked="true" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">allowKeyboardInteraction</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="key-board" checked="true" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">allowDragAndDrop</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="drag-drop" checked="true" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">allowResizing</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="resizing" checked="true" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">cssClass</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="cell-dimension" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">editorTemplate</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="editor-temp" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">showTimeIndicator</div>
+                    <div class="col-md-5">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input id="time-indicator" checked="false" class="form-check-input" type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">scrollTo</div>
+                    <div class="col-md-5">
+                        <input id="scrollTo" type="text" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

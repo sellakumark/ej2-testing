@@ -1,0 +1,29 @@
+{
+    "name": "ej2-schedule-e2e-typescript",
+    "version": "1.0.0",
+    "description": "TypeScript E2E Automation for Schedule",
+    "author": "Syncfusion Inc.",
+    "license": "SEE LICENSE IN license",
+    "private": true,
+    "dependencies": {
+        "@syncfusion/ej2-build": "*",
+        "@syncfusion/ej2-schedule": "*"
+    },
+    "devDependencies": {
+        "@types/chai": "^3.4.28",
+        "@types/jasmine": "^2.2.29",
+        "@types/jasmine-ajax": "^3.1.27",
+        "@types/requirejs": "^2.1.26",
+        "emailjs": "^2.2.0",
+        "gulp": "^3.9.1",
+        "protractor": "5.4.0",
+        "requirejs": "^2.1.26"
+    },
+    "scripts": {
+        "driver-update": "webdriver-manager update",
+        "driver-start": "webdriver-manager start",
+        "email": "gulp send-email",
+        "start": "gulp start",
+        "test": "gulp e2e-ci-test"
+    }
+}
