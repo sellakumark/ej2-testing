@@ -19,7 +19,7 @@ export namespace Helper {
     export const tWorkWeek: object = By.className('e-timeline-work-week');
     export const tMonth: object = By.className('e-timeline-month');
     export const loadAndWait: Function = (url: string, ele: Element, time: number = 2000) => {
-        browser.load(url);
+        browser.loadAsync(url);
         browser.wait(browser.ExpectedConditions.presenceOf(element(ele)), time);
         browser.driver.manage().window().maximize();
     };
