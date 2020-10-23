@@ -1,5 +1,6 @@
 import { browser, element, By, protractor } from '@syncfusion/ej2-base/e2e/index';
 import { Helper } from './Helper/helper.spec';
+import 'jasmine';
 
 /**
  * E2E Spec for Day View
