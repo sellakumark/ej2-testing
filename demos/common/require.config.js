@@ -2,7 +2,8 @@ require.config({
 
     baseUrl: './',
 
-    packages: [{
+    packages: [
+        {
             name: '@syncfusion/ej2-base',
             location: '../../node_modules/@syncfusion/ej2-base/dist',
             main: 'ej2-base.umd.min.js'
@@ -51,6 +52,11 @@ require.config({
             name: '@syncfusion/ej2-splitbuttons',
             location: '../../node_modules/@syncfusion/ej2-splitbuttons/dist',
             main: 'ej2-splitbuttons.umd.min.js'
+        },
+        {
+            name: '@syncfusion/ej2-kanban',
+            location: '../../node_modules/@syncfusion/ej2-kanban/dist',
+            main: 'ej2-kanban.umd.min.js'
         },
         {
             name: '@syncfusion/ej2-schedule',

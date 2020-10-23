@@ -4,7 +4,7 @@
 
 import { Internationalization, EmitType, createElement, remove, extend, EventHandler, Ajax, loadCldr, L10n } from '@syncfusion/ej2-base';
 import { Dialog, Popup } from '@syncfusion/ej2-popups';
-import { ResourceDetails, TreeViewArgs, Schedule, ScheduleModel, EJ2Instance } from '@syncfusion/ej2-schedule';
+import { ResourceDetails, Schedule, ScheduleModel, EJ2Instance } from '@syncfusion/ej2-schedule';
 import { localeObj } from '../common/locale';
 
 export interface CommonArgs {
@@ -62,10 +62,8 @@ let instance: Internationalization = new Internationalization();
 (window as TemplateFunction).getShortDateTime = (value: Date) => {
     return instance.formatDate(value, { type: 'dateTime', skeleton: 'short' });
 };
-(window as TemplateFunction).getResourceName = (value: ResourceDetails | TreeViewArgs) => {
-    return ((value as ResourceDetails).resourceData) ?
-        (value as ResourceDetails).resourceData[(value as ResourceDetails).resource.textField]
-        : (value as TreeViewArgs).resourceName;
+(window as TemplateFunction).getResourceName = (value: ResourceDetails) => {
+    return (value.resourceData) ? value.resourceData[value.resource.textField] : value.resourceName;
 };
 (window as TemplateFunction).getDateText = (value: Date) => {
     return instance.formatDate(value, { skeleton: 'MMMd' });
@@ -89,7 +87,7 @@ let instance: Internationalization = new Internationalization();
     }
     return '';
 };
-(window as TemplateFunction).getResourceImage = (value: ResourceDetails | TreeViewArgs) => {
+(window as TemplateFunction).getResourceImage = (value: ResourceDetails) => {
     let imgSrc: string;
     let resourceName: string = (window as TemplateFunction).getResourceName(value);
     switch (resourceName) {
@@ -102,12 +100,9 @@ let instance: Internationalization = new Internationalization();
             break;
         default:
             imgSrc = '';
+            break;
     }
     return imgSrc;
-};
-(window as TemplateFunction).getResourceName = (value: ResourceDetails | TreeViewArgs) => {
-    return ((value as ResourceDetails).resourceData) ?
-        (value as ResourceDetails).resourceData[(value as ResourceDetails).resource.textField] : (value as TreeViewArgs).resourceName;
 };
 
 export function createSchedule(options: ScheduleModel, dataSource: Object[], done?: Function): Schedule {
@@ -192,7 +187,8 @@ export function triggerMouseEvent(
 
 export function triggerScrollEvent(target: HTMLElement, scrollTop: number): void {
     target.scrollTop = scrollTop;
-    let e: UIEvent = document.createEvent('UIEvents');
+    // tslint:disable-next-line:no-any
+    let e: UIEvent & any = document.createEvent('UIEvents');
     e.initUIEvent('scroll', true, true, window, 1);
     target.dispatchEvent(e);
 }

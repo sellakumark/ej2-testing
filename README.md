@@ -1,4 +1,4 @@
-# Schedule Typescript E2E Automation
+# Typescript E2E Automation Testing
 
 ## Package Installation
 
@@ -8,20 +8,28 @@ To install packages in this directory by using below command,
 npm install
 ```
 
-## How to build scripts
+## How to run samples
 
-Build - To build the scripts compile from TS to JS
+Run - To run the samples by executing the below command,
 
 ```
-gulp scripts-gen
+npm run start
+```
+
+## How to start testdriver
+
+TestDriver - To start the testdriver by executing the below command,
+
+```
+npm run testdriver
 ```
 
 ## How to start test
 
-Test - To start the test process
+Test - To start the test process by ececuting the below command,
 
 ```
-gulp e2e-ci-test
+npm run test
 ```
 
 ### Supported Browsers
