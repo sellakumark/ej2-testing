@@ -18,7 +18,7 @@
         "emailjs": "2.2.0",
         "gulp": "3.9.1",
         "protractor": "5.4.0",
-        "requirejs": "2.1.26"
+        "requirejs": "2.3.6"
     },
     "scripts": {
         "start": "gulp start",
